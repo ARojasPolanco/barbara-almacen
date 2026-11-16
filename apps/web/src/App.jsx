@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   BarChart3,
   FileText,
@@ -10,28 +10,29 @@ import {
   Store,
   Wallet,
   X,
-} from "lucide-react";
-import Login from "./components/Login";
-import ProductList from "./components/ProductList";
-import CreditAccounts from "./components/CreditAccounts";
-import SaleForm from "./components/SaleForm";
-import Expenses from "./components/Expenses";
-import Invoices from "./components/Invoices";
-import Reports from "./components/Reports";
-import { Button, cn } from "./components/ui";
+} from 'lucide-react';
+import Login from './components/Login';
+import ProductList from './components/ProductList';
+import CreditAccounts from './components/CreditAccounts';
+import SaleForm from './components/SaleForm';
+import Expenses from './components/Expenses';
+import Invoices from './components/Invoices';
+import Reports from './components/Reports';
+import LoadingOverlay from './components/LoadingOverlay';
+import { Button, cn } from './components/ui';
 
 const NAV_ITEMS = [
-  { key: "products", label: "Productos", icon: Package },
-  { key: "new-sale", label: "Nueva venta", icon: ShoppingCart },
-  { key: "credit-accounts", label: "Cuentas corrientes", icon: Wallet, adminOnly: true },
-  { key: "expenses", label: "Gastos", icon: Receipt, adminOnly: true },
-  { key: "invoices", label: "Facturas", icon: FileText, adminOnly: true },
-  { key: "reports", label: "Reportes", icon: BarChart3, adminOnly: true },
+  { key: 'products', label: 'Productos', icon: Package },
+  { key: 'new-sale', label: 'Nueva venta', icon: ShoppingCart },
+  { key: 'credit-accounts', label: 'Cuentas corrientes', icon: Wallet, adminOnly: true },
+  { key: 'expenses', label: 'Gastos', icon: Receipt, adminOnly: true },
+  { key: 'invoices', label: 'Facturas', icon: FileText, adminOnly: true },
+  { key: 'reports', label: 'Reportes', icon: BarChart3, adminOnly: true },
 ];
 
 function readStoredUser() {
   try {
-    return JSON.parse(localStorage.getItem("user") || "null");
+    return JSON.parse(localStorage.getItem('user') || 'null');
   } catch {
     return null;
   }
@@ -66,16 +67,16 @@ function NavLinks({ items, view, onNavigate }) {
             type="button"
             onClick={() => onNavigate(item.key)}
             className={cn(
-              "group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors",
+              'group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors',
               active
-                ? "bg-emerald-50 text-emerald-800"
-                : "text-stone-600 hover:bg-stone-100 hover:text-stone-900"
+                ? 'bg-emerald-50 text-emerald-800'
+                : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
             )}
           >
             <Icon
               className={cn(
-                "h-5 w-5 shrink-0",
-                active ? "text-emerald-700" : "text-stone-400 group-hover:text-stone-600"
+                'h-5 w-5 shrink-0',
+                active ? 'text-emerald-700' : 'text-stone-400 group-hover:text-stone-600'
               )}
             />
             <span className="truncate">{item.label}</span>
@@ -88,7 +89,7 @@ function NavLinks({ items, view, onNavigate }) {
 }
 
 function UserCard({ user, onLogout }) {
-  const initials = (user?.username || "?").slice(0, 2).toUpperCase();
+  const initials = (user?.username || '?').slice(0, 2).toUpperCase();
 
   return (
     <div className="border-t border-stone-200 p-3">
@@ -111,11 +112,11 @@ function UserCard({ user, onLogout }) {
 export default function App() {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
-  const [view, setView] = useState("products");
+  const [view, setView] = useState('products');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
+    const savedToken = localStorage.getItem('token');
     const savedUser = readStoredUser();
 
     if (savedToken && savedUser) {
@@ -127,16 +128,16 @@ export default function App() {
   function handleLogin(nextToken, nextUser) {
     setToken(nextToken);
     setUser(nextUser);
-    localStorage.setItem("token", nextToken);
-    localStorage.setItem("user", JSON.stringify(nextUser));
+    localStorage.setItem('token', nextToken);
+    localStorage.setItem('user', JSON.stringify(nextUser));
   }
 
   function handleLogout() {
     setToken(null);
     setUser(null);
     setMobileNavOpen(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   }
 
   function navigateTo(viewName) {
@@ -145,19 +146,24 @@ export default function App() {
   }
 
   if (!token) {
-    return <Login onLogin={handleLogin} />;
+    return (
+      <>
+        <Login onLogin={handleLogin} />
+        <LoadingOverlay />
+      </>
+    );
   }
 
-  const isAdmin = user?.role === "administrador";
+  const isAdmin = user?.role === 'administrador';
   const items = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   function renderView() {
-    if (view === "products") return <ProductList user={user} />;
-    if (view === "new-sale") return <SaleForm />;
-    if (view === "credit-accounts" && isAdmin) return <CreditAccounts />;
-    if (view === "expenses" && isAdmin) return <Expenses />;
-    if (view === "invoices" && isAdmin) return <Invoices />;
-    if (view === "reports" && isAdmin) return <Reports />;
+    if (view === 'products') return <ProductList user={user} />;
+    if (view === 'new-sale') return <SaleForm />;
+    if (view === 'credit-accounts' && isAdmin) return <CreditAccounts />;
+    if (view === 'expenses' && isAdmin) return <Expenses />;
+    if (view === 'invoices' && isAdmin) return <Invoices />;
+    if (view === 'reports' && isAdmin) return <Reports />;
     return <ProductList user={user} />;
   }
 
@@ -181,7 +187,7 @@ export default function App() {
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-2">
           <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-            {isAdmin ? "Administración" : "Mostrador"}
+            {isAdmin ? 'Administración' : 'Mostrador'}
           </p>
           <NavLinks items={items} view={view} onNavigate={navigateTo} />
         </div>
@@ -209,7 +215,7 @@ export default function App() {
             </div>
             <div className="flex-1 overflow-y-auto px-3 py-2">
               <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-stone-400">
-                {isAdmin ? "Administración" : "Mostrador"}
+                {isAdmin ? 'Administración' : 'Mostrador'}
               </p>
               <NavLinks items={items} view={view} onNavigate={navigateTo} />
             </div>
@@ -223,6 +229,8 @@ export default function App() {
           {renderView()}
         </div>
       </main>
+
+      <LoadingOverlay />
     </div>
   );
 }

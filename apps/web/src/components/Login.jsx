@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { CheckCircle2, LogIn, Store } from "lucide-react";
-import { Banner, Button, Field, Input } from "./ui";
+import { useState } from 'react';
+import { CheckCircle2, LogIn, Store } from 'lucide-react';
+import { login } from '../services/api';
+import { Banner, Button, Field, Input } from './ui';
 
 const FEATURES = [
-  "Productos y precios siempre al día",
-  "Ventas rápidas desde el mostrador",
-  "Cuentas corrientes y cobros ordenados",
+  'Productos y precios siempre al día',
+  'Ventas rápidas desde el mostrador',
+  'Cuentas corrientes y cobros ordenados',
 ];
 
 export default function Login({ onLogin }) {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -20,22 +21,12 @@ export default function Login({ onLogin }) {
     setLoading(true);
 
     try {
-      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api/v1";
-      const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
-
-      const data = await response.json().catch(() => null);
-
-      if (!response.ok) {
-        throw new Error(data?.error || data?.message || "Usuario o contraseña incorrectos");
-      }
-
+      const data = await login(username, password);
       onLogin(data.token, data.user);
     } catch (err) {
-      setError(err.message);
+      setError(
+        err.message === 'Invalid credentials' ? 'Usuario o contraseña incorrectos' : err.message
+      );
     } finally {
       setLoading(false);
     }
@@ -93,9 +84,7 @@ export default function Login({ onLogin }) {
 
           <div className="mb-6">
             <h1 className="text-2xl font-bold tracking-tight text-stone-900">Ingresar</h1>
-            <p className="mt-1 text-sm text-stone-500">
-              Acceso para vendedores y administración.
-            </p>
+            <p className="mt-1 text-sm text-stone-500">Acceso para vendedores y administración.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -127,7 +116,7 @@ export default function Login({ onLogin }) {
 
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
               {loading ? (
-                "Ingresando..."
+                'Ingresando...'
               ) : (
                 <>
                   <LogIn className="h-4 w-4" />
