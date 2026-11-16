@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CheckCircle2, LogIn, Store } from 'lucide-react';
+import { CheckCircle2, Eye, EyeOff, LogIn, Store } from 'lucide-react';
 import { login } from '../services/api';
 import { Banner, Button, Field, Input } from './ui';
 
@@ -12,6 +12,7 @@ const FEATURES = [
 export default function Login({ onLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -103,15 +104,27 @@ export default function Login({ onLogin }) {
             </Field>
 
             <Field label="Contraseña" htmlFor="password">
-              <Input
-                id="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="Tu contraseña"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  placeholder="Tu contraseña"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  className="pr-11"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-stone-400 transition-colors hover:bg-stone-100 hover:text-stone-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                  aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                  aria-pressed={showPassword}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </Field>
 
             <Button type="submit" size="lg" className="w-full" disabled={loading}>
