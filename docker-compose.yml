@@ -1,0 +1,66 @@
+name: price-tracker
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: price-tracker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: pricetracker
+      POSTGRES_PASSWORD: pricetracker_dev_password
+      POSTGRES_DB: pricetracker_dev
+    ports:
+      - '5433:5432'
+    volumes:
+      - pricetracker_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pricetracker -d pricetracker_dev']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    profiles: ['app']
+    build:
+      context: .
+      dockerfile: Dockerfile.api.dev
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgresql://pricetracker:pricetracker_dev_password@postgres:5432/pricetracker_dev
+      JWT_SECRET: ${JWT_SECRET:-change_this_dev_secret}
+      VENDOR_PASSWORD: ${VENDOR_PASSWORD:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ALLOWED_ORIGIN: http://localhost:5173
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./apps/api/src:/app/apps/api/src
+      - ./apps/api/scripts:/app/apps/api/scripts
+    working_dir: /app/apps/api
+    command: node --watch src/index.js
+
+  web:
+    profiles: ['app']
+    build:
+      context: .
+      dockerfile: Dockerfile.web.dev
+    environment:
+      VITE_API_URL: http://localhost:3000/api/v1
+      CHOKIDAR_USEPOLLING: 'true'
+    ports:
+      - '5173:5173'
+    depends_on:
+      - api
+    volumes:
+      - ./apps/web/src:/app/apps/web/src
+      - ./apps/web/public:/app/apps/web/public
+      - ./apps/web/index.html:/app/apps/web/index.html
+    working_dir: /app/apps/web
+    command: npx vite --host 0.0.0.0 --port 5173
+
+volumes:
+  pricetracker_pg_data:

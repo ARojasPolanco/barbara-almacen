@@ -1,0 +1,49 @@
+{
+  "name": "barbara-almacen",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10"
+  },
+  "scripts": {
+    "dev": "npm run dev:all",
+    "dev:all": "concurrently -k -n api,web -c cyan,green \"npm --silent run dev -w @price-tracker/api\" \"npm --silent run dev -w @price-tracker/web\"",
+    "dev:api": "npm run dev -w @price-tracker/api",
+    "dev:web": "npm run dev -w @price-tracker/web",
+    "build": "npm run build -w @price-tracker/web",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "seed": "npm run seed -w @price-tracker/api",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:app": "docker compose --profile app up -d --build",
+    "prepare": "husky || true"
+  },
+  "lint-staged": {
+    "*.{js,jsx,json,md,yml,yaml,css}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx}": [
+      "eslint --fix"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.0",
+    "concurrently": "^10.0.7",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.5.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.6.2"
+  }
+}

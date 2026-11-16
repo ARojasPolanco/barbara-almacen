@@ -1,0 +1,15 @@
+node_modules/
+dist/
+coverage/
+build/
+.env
+.env.local
+.env.docker
+.env.docker.prod
+.env.production
+.env.production.local
+.env.*.local
+.env.test
+*.log
+.DS_Store
+Thumbs.db
